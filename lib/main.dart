@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       builder: DevicePreview.appBuilder,
       locale: DevicePreview.locale(context),
-      home: const FacebookUI(),
+      home: FacebookUI(),
       theme: ThemeData(
         fontFamily: 'Nunito',
       ),

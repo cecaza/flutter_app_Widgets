@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:faker/faker.dart';
+import 'package:flutter_app/facebook_ui/widgets/publication_item.dart';
 import 'package:flutter_app/facebook_ui/widgets/stories.dart';
+import 'package:flutter_app/models/publication.dart';
 import 'widgets/quick_actions.dart';
 import 'package:flutter_app/facebook_ui/widgets/what_is_on_your_mind.dart';
 import 'package:flutter_app/icons/custom_icons.dart';
@@ -8,12 +13,27 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'widgets/circle_buttom.dart';
 
 class FacebookUI extends StatelessWidget {
-  const FacebookUI({
-    super.key,
-  });
-
   @override
   Widget build(BuildContext context) {
+    final faker = Faker();
+    final publications = <Publication>[];
+    for (int i = 0; i < 50; i++) {
+      final random = faker.randomGenerator;
+      final publication = Publication(
+        user: User(
+          avatar: faker.image.image(),
+          userName: faker.person.name(),
+        ),
+        title: faker.lorem.sentence(),
+        createdAt: faker.date.dateTime(),
+        imageUrl: faker.image.image(),
+        commentsCount: random.integer(50000),
+        shareCount: random.integer(50000),
+        curentUserReaction:
+            Reaction.values[random.integer(Reaction.values.length - 1)],
+      );
+      publications.add(publication);
+    }
     return Scaffold(
       appBar: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -63,19 +83,22 @@ class FacebookUI extends StatelessWidget {
         ],
       ),
       body: ListView(
-        children: const [
-          SizedBox(
-            height: 10,
+        children: [
+          const SizedBox(height: 10),
+          const WhatIsOnUrMind(),
+          const SizedBox(height: 30),
+          const QuickAction(),
+          const SizedBox(height: 30),
+          const Stories(),
+          const SizedBox(height: 20),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (_, index) => PublicationItem(
+              publication: publications[index],
+            ),
+            itemCount: publications.length,
           ),
-          WhatIsOnUrMind(),
-          SizedBox(
-            height: 30,
-          ),
-          QuickAction(),
-          SizedBox(
-            height: 30,
-          ),
-          Stories(),
         ],
       ),
     );
